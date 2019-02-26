@@ -1,12 +1,11 @@
-import { ApolloConfigModule } from './apollo-config.module';
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatToolbarModule, MatListModule } from '@angular/material';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppComponent } from './app.component';
+import { ApolloConfigModule } from './apollo-config.module';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -17,9 +16,8 @@ import { MatToolbarModule, MatListModule } from '@angular/material';
     AppRoutingModule,
     BrowserAnimationsModule,
     ApolloConfigModule,
-    HttpClientModule,
     MatListModule,
-    MatToolbarModule,
+    MatToolbarModule
   ],
   providers: [],
   bootstrap: [AppComponent]
