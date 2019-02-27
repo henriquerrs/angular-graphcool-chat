@@ -53,7 +53,7 @@ permissions:
 
   - operation: User.create
     fields: [name, email, password]
-  
+
   - operation: User.read
     authenticated: true
   - operation: User.update
@@ -72,6 +72,26 @@ permissions:
   - operation: Chat.update
     authenticated: true
   - operation: Chat.delete
+    authenticated: true
+
+  #Message
+  - operation: Message.read
+    authenticated: true
+  - operation: Message.create
+    authenticated: true
+  - operation: Message.update
+    authenticated: true
+  - operation: Message.delete
+    authenticated: true
+
+  #File
+  - operation: File.read
+    authenticated: true
+  - operation: File.create
+    authenticated: true
+  - operation: File.update
+    authenticated: true
+  - operation: File.delete
     authenticated: true
 
 # Your root tokens used for functions to get full access to the API
