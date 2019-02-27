@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 
 import { AppComponent } from './app.component';
+import { LoginModule } from './login/login.module';
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import { AppComponent } from './app.component';
     AppComponent
   ],
   imports: [
-    CoreModule
+    CoreModule,
+    LoginModule
   ],
   providers: [],
   bootstrap: [AppComponent]
