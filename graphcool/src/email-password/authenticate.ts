@@ -29,13 +29,13 @@ export default async (event: FunctionEvent<EventData>) => {
 
     // no user with this email
     if (!user) {
-      return { error: 'Credenciais inválidas!' };
+      return { error: 'Usuário inválidas!' };
     }
 
     // check password
     const passwordIsCorrect = await bcrypt.compare(password, user.password);
     if (!passwordIsCorrect) {
-      return { error: 'Credenciais inválidas!' };
+      return { error: 'Senha inválidas!' };
     }
 
     // generate node token for existing User node
