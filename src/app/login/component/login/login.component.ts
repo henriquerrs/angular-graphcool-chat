@@ -1,24 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { ErrorService } from './../../../core/services/error.service';
+import { AuthService } from './../../../core/services/auth.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { takeWhile } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm: FormGroup;
   configs = {
     isLogin: true,
     actionText: 'Entrar',
-    buttonActionText: 'Criando conta'
+    buttonActionText: 'Criando conta',
+    isLoading: false
   };
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
+  private alive = true;
 
   constructor(
-    private formBuilder: FormBuilder
-  ) { }
+    private authService: AuthService,
+    private formBuilder: FormBuilder,
+    private errorService: ErrorService,
+    private snackBar: MatSnackBar
+  ) {  }
 
   ngOnInit() {
     this.createForm();
@@ -33,6 +42,29 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     console.log(this.loginForm.value);
+
+    this.configs.isLoading = true;
+
+    const operation =
+      (this.configs.isLogin)
+        ? this.authService.entrarUser(this.loginForm.value)
+        : this.authService.criarUser(this.loginForm.value);
+    operation
+      .pipe(
+        takeWhile(() => this.alive)
+      )
+      .subscribe
+        (res => {
+          console.log('rota', res);
+          this.configs.isLoading = false;
+        },
+        err => {
+          console.log(this.errorService.getErrorMessage(err));
+          this.configs.isLoading = false;
+          this.snackBar.open(this.errorService.getErrorMessage(err), 'Pronto', {duration: 5000, verticalPosition: 'top'});
+        },
+        () => console.log('Observable completo')
+      );
   }
 
   changeAction(): void {
@@ -45,5 +77,9 @@ export class LoginComponent implements OnInit {
   get name(): FormControl { return <FormControl>this.loginForm.get('name'); }
   get email(): FormControl { return <FormControl>this.loginForm.get('email'); }
   get password(): FormControl { return <FormControl>this.loginForm.get('password'); }
+
+  ngOnDestroy(): void {
+    this.alive = false;
+  }
 
 }
