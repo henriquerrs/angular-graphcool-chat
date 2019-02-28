@@ -9,6 +9,12 @@ import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms'
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
+  configs = {
+    isLogin: true,
+    actionText: 'Entrar',
+    buttonActionText: 'Criando conta'
+  };
+  private nameControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
 
   constructor(
     private formBuilder: FormBuilder
@@ -29,6 +35,14 @@ export class LoginComponent implements OnInit {
     console.log(this.loginForm.value);
   }
 
+  changeAction(): void {
+    this.configs.isLogin = !this.configs.isLogin;
+    this.configs.actionText = !this.configs.isLogin ? 'Criar conta' : 'Entrar';
+    this.configs.buttonActionText = !this.configs.isLogin ? 'Já tenho uma conta' : 'Criando conta';
+    !this.configs.isLogin ? this.loginForm.addControl('name', this.nameControl) : this.loginForm.removeControl('name');
+  }
+
+  get name(): FormControl { return <FormControl>this.loginForm.get('name'); }
   get email(): FormControl { return <FormControl>this.loginForm.get('email'); }
   get password(): FormControl { return <FormControl>this.loginForm.get('password'); }
 
