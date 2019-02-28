@@ -8,11 +8,11 @@
       <form (submit)="onSubmit()" [formGroup]="loginForm">
 
         <mat-form-field>
-          <input matInput type="email" placeholder="Email" formControlName="email" required>
+          <input matInput type="email" placeholder="Email" formControlName="email">
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput type="password" placeholder="Password" formControlName="password" required>
+          <input matInput type="password" placeholder="Password" formControlName="password">
         </mat-form-field>
 
         <button type="submit" mat-button color="primary"[disabled]="loginForm.invalid">Sign in</button>
