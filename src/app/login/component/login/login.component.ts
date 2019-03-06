@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   private nameControl = new FormControl('', [Validators.required, Validators.minLength(5)]);
   private alive = true;
 
-  @HostBinding('class.app-login-spinner') private appltSpinnerClass = true;
+  @HostBinding('class.app-login-spinner') private applySpinnerClass = true;
 
   constructor(
     private authService: AuthService,
