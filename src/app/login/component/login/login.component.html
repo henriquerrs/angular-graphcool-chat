@@ -58,6 +58,9 @@
           </mat-error>
         </mat-form-field>
 
+        <mat-slide-toggle [checked]='authService.keepSigned' (change)='onKeepSigned()'>Matenha-me logado</mat-slide-toggle>
+        <mat-slide-toggle [checked]='authService.rememberMe' (change)='onRememberMe()'>Lembrar minhas credenciais</mat-slide-toggle>
+
         <button
           type="submit"
           mat-button

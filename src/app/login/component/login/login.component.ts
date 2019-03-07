@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   @HostBinding('class.app-login-spinner') private applySpinnerClass = true;
 
   constructor(
-    private authService: AuthService,
+    public authService: AuthService,
     private formBuilder: FormBuilder,
     private errorService: ErrorService,
     private snackBar: MatSnackBar
@@ -32,6 +32,11 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.createForm();
+    const userData = this.authService.getRememberMe();
+    if (userData) {
+      this.email.setValue(userData.email);
+      this.password.setValue(userData.password);
+    }
   }
 
   createForm(): void {
@@ -57,6 +62,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe
         (res => {
           console.log('rota', res);
+          this.authService.setRememberMe(this.loginForm.value);
+          const redirect: string = this.authService.redirecturl || '/dashboard';
+          this.authService.redirecturl = null;
           this.configs.isLoading = false;
         },
         err => {
@@ -66,6 +74,14 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         () => console.log('Observable completo')
       );
+  }
+
+  onKeepSigned(): void {
+    this.authService.toggleKeepSigned();
+  }
+
+  onRememberMe(): void {
+    this.authService.toggleRemember();
   }
 
   changeAction(): void {
