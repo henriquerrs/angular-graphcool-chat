@@ -2,7 +2,7 @@ import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { ApolloConfigModule } from './../apollo-config.module';
 import { AppRoutingModule } from './../app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 
 @NgModule({
   exports: [
@@ -10,6 +10,9 @@ import { BrowserModule } from '@angular/platform-browser';
     AppRoutingModule,
     BrowserAnimationsModule,
     ApolloConfigModule
+  ],
+  providers: [
+    Title
   ]
 })
 export class CoreModule {

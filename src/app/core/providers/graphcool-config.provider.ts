@@ -10,9 +10,9 @@ export interface GraphcoolConfig {
 }
 
 export const graphcoolConfig: GraphcoolConfig = {
-  simpleAPI: `https://api.graph.cool/simple/v1${graphcoolId}`,
-  subscritionAPI: `wss://subscriptions.graph.cool/v1${graphcoolId}`,
-  fileAPI: `https://api.graph.cool/file/v1${graphcoolId}`,
+  simpleAPI: `https://api.graph.cool/simple/v1/${graphcoolId}`,
+  subscritionAPI: `wss://subscriptions.graph.cool/v1/${graphcoolId}`,
+  fileAPI: `https://api.graph.cool/file/v1/${graphcoolId}`,
   fileDownloadURL: `https://files.graph.cool/${graphcoolId}`
 };
 
