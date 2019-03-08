@@ -13,7 +13,8 @@ import {
   MatListModule,
   MatIconModule,
   MatLineModule,
-  MatSidenavModule
+  MatSidenavModule,
+  MatTabsModule
 } from '@angular/material';
 
 @NgModule({
@@ -31,6 +32,7 @@ import {
     MatIconModule,
     MatLineModule,
     MatSidenavModule,
+    MatTabsModule,
     ReactiveFormsModule
   ]
 })
