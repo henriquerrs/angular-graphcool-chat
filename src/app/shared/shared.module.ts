@@ -16,8 +16,12 @@ import {
   MatSidenavModule,
   MatTabsModule
 } from '@angular/material';
+import { NoRecordComponent } from './components/no-record/no-record.component';
 
 @NgModule({
+  imports: [
+    MatIconModule
+  ],
   exports: [
     CommonModule,
     MatButtonModule,
@@ -33,7 +37,9 @@ import {
     MatLineModule,
     MatSidenavModule,
     MatTabsModule,
+    NoRecordComponent,
     ReactiveFormsModule
-  ]
+  ],
+  declarations: [NoRecordComponent]
 })
 export class SharedModule {}
