@@ -33,6 +33,7 @@ export const USER_CHATS_QUERY = gql `
         }
         messages(last: 1) {
           id
+          createdAt
           text
           sender {
             id
@@ -110,13 +111,14 @@ export const CREATE_PRIVATE_CHAT_MUTATION = gql `
         createdAt
       }
       messages(last: 1) {
-        id
-        text
-        sender {
           id
-          name
+          createdAt
+          text
+          sender {
+            id
+            name
+          }
         }
-      }
     }
   }
 `;

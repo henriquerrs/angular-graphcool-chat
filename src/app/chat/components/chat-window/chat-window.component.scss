@@ -1,3 +1,4 @@
+@import "_variables.scss";
 .footer {
   position: fixed;
   bottom: 0;
@@ -13,4 +14,8 @@
   background-color: #efefef;
   outline: none;
   resize: none;
+}
+
+ul li {
+  background-color: $primary;
 }
