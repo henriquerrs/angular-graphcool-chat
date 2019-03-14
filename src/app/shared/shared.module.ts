@@ -18,6 +18,7 @@ import {
 } from '@angular/material';
 import { NoRecordComponent } from './components/no-record/no-record.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
+import { FromNowPipe } from './pipes/from-now.pipe';
 
 @NgModule({
   imports: [
@@ -42,8 +43,9 @@ import { AvatarComponent } from './components/avatar/avatar.component';
     NoRecordComponent,
     FormsModule,
     AvatarComponent,
+    FromNowPipe,
     ReactiveFormsModule
   ],
-  declarations: [NoRecordComponent, AvatarComponent]
+  declarations: [NoRecordComponent, AvatarComponent, FromNowPipe]
 })
 export class SharedModule {}
