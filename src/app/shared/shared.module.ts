@@ -17,10 +17,12 @@ import {
   MatTabsModule
 } from '@angular/material';
 import { NoRecordComponent } from './components/no-record/no-record.component';
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 @NgModule({
   imports: [
-    MatIconModule
+    MatIconModule,
+    CommonModule
   ],
   exports: [
     CommonModule,
@@ -39,8 +41,9 @@ import { NoRecordComponent } from './components/no-record/no-record.component';
     MatTabsModule,
     NoRecordComponent,
     FormsModule,
+    AvatarComponent,
     ReactiveFormsModule
   ],
-  declarations: [NoRecordComponent]
+  declarations: [NoRecordComponent, AvatarComponent]
 })
 export class SharedModule {}

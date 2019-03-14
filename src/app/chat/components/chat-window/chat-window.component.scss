@@ -1,4 +1,9 @@
-@import "_variables.scss";
+.content {
+  position: relative;
+  padding-bottom: 25%;
+  margin-bottom: -50%;
+}
+
 .footer {
   position: fixed;
   bottom: 0;
@@ -16,6 +21,3 @@
   resize: none;
 }
 
-ul li {
-  background-color: $primary;
-}
