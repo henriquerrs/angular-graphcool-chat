@@ -1,11 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { AppConfigService } from 'src/app/core/services/app-config.service';
 
 @Pipe({
   name: 'fromNow'
 })
 export class FromNowPipe implements PipeTransform {
+
+  constructor(
+    private appConfig: AppConfigService
+  ) {}
+
   transform(date: string): string {
-    return timeDifferenceForDate(date);
+    return timeDifferenceForDate(date, this.appConfig.timeDifference);
   }
 
 }
@@ -20,25 +26,25 @@ function getTimeDifference(current: number, previous: number) {
   const elapsed = current - previous;
 
   if (elapsed < milliSecondsPerMinute / 3) {
-    return 'just now';
+    return 'Agora mesmo';
   }
 
   if (elapsed < milliSecondsPerMinute) {
-    return 'less than 1 min ago';
+    return 'menos de 1 min atrás';
   } else if (elapsed < milliSecondsPerHour) {
-    return Math.round(elapsed / milliSecondsPerMinute) + ' min ago';
+    return Math.round(elapsed / milliSecondsPerMinute) + ' min atrás';
   } else if (elapsed < milliSecondsPerDay) {
-    return Math.round(elapsed / milliSecondsPerHour) + ' h ago';
+    return Math.round(elapsed / milliSecondsPerHour) + ' h atrás';
   } else if (elapsed < milliSecondsPerMonth) {
-    return Math.round(elapsed / milliSecondsPerDay) + ' days ago';
+    return Math.round(elapsed / milliSecondsPerDay) + ' dias atrás';
   } else if (elapsed < milliSecondsPerYear) {
-    return Math.round(elapsed / milliSecondsPerMonth) + ' mo ago';
+    return Math.round(elapsed / milliSecondsPerMonth) + ' meses atrás';
   } else {
-    return Math.round(elapsed / milliSecondsPerYear) + ' years ago';
+    return Math.round(elapsed / milliSecondsPerYear) + ' anos atrás';
   }
 }
 
-function timeDifferenceForDate(date: string) {
+function timeDifferenceForDate(date: string, timeDifference: number) {
   const now = new Date().getTime();
   const updated = new Date(date).getTime();
   return getTimeDifference(now, updated);
