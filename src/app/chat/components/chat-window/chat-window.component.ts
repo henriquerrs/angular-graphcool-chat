@@ -11,13 +11,14 @@ import { MessageService } from '../../services/message.service';
 import { AuthService } from 'src/app/core/services/auth.service';
 import authenticate from 'graphcool/src/email-password/authenticate';
 import { ChatService } from '../../services/chat.service';
+import { BaseComponent } from 'src/app/shared/components/base.component';
 
 @Component({
   selector: 'app-chat-window',
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.component.scss']
 })
-export class ChatWindowComponent implements OnInit, OnDestroy {
+export class ChatWindowComponent extends BaseComponent<Message> implements OnInit, OnDestroy {
 
   chat: Chat;
   messages$: Observable<Message[]>;
@@ -32,7 +33,9 @@ export class ChatWindowComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private title: Title,
     private userService: UserService
-  ) { }
+  ) {
+    super();
+   }
 
   ngOnInit(): void {
     this.title.setTitle('Loading...');
