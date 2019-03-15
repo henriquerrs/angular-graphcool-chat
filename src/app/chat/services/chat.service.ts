@@ -20,7 +20,7 @@ export class ChatService {
     return this.apollo.query<AllChatsQuery>({
       query: USER_CHATS_QUERY,
       variables: {
-        userId: this.authService.authUser.id
+        loggedUserId: this.authService.authUser.id
       }
     }).pipe(
       map(res => res.data.allChats),
@@ -47,7 +47,7 @@ export class ChatService {
       map(res => (res.data['Chat']) ? res.data['Chat'] : res.data['allChats'][0])
     );
   }
-  
+
   createPrivateChat(targetUserId: string): Observable<Chat> {
     return this.apollo.mutate({
       mutation: CREATE_PRIVATE_CHAT_MUTATION,
