@@ -12,12 +12,14 @@ import { AppConfigService } from './core/services/app-config.service';
   `
 })
 export class AppComponent implements OnInit {
+
   constructor(
     private appConfig: AppConfigService,
     private authService: AuthService,
     private errorService: ErrorService,
     private snackBar: MatSnackBar
     ) {}
+
   ngOnInit(): void {
     this.authService.autoLogin()
       .pipe(take(1))

@@ -4,20 +4,23 @@ import { AllChatsQuery } from '../../services/chat.graphql';
 import { Chat } from '../../models/chat.model';
 import { ChatService } from '../../services/chat.service';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { BaseComponent } from 'src/app/shared/components/base.component';
 
 @Component({
   selector: 'app-chat-list',
   templateUrl: './chat-list.component.html',
   styleUrls: ['./chat-list.component.scss']
 })
-export class ChatListComponent implements OnInit {
+export class ChatListComponent extends BaseComponent<Chat> implements OnInit {
 
   chats$: Observable<Chat[]>;
 
   constructor(
     private authService: AuthService,
     private chatService: ChatService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.chats$ = this.chatService.getUserChats();

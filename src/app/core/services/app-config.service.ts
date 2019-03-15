@@ -21,7 +21,6 @@ export class AppConfigService {
         .pipe(take(1))
         .subscribe(res => {
           this.timeDifference = new Date(res['currentDateTime']).getTime() - Date.now();
-          console.log(this.timeDifference);
         });
     }
   }
