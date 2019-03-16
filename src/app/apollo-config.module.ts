@@ -8,6 +8,7 @@ import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import { StorageKeys } from './storage-keys';
 import { GRAPHCOOL_CONFIG, GraphcoolConfig } from './core/providers/graphcool-config.provider';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   imports: [
@@ -51,7 +52,8 @@ export class ApolloConfigModule {
         linkError,
         authMiddleware.concat(http)
       ]),
-      cache: new InMemoryCache()
+      cache: new InMemoryCache(),
+      connectToDevTools: !environment.production
     });
   }
 
