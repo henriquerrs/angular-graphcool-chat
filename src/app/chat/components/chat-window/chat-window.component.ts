@@ -24,6 +24,7 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
   messages$: Observable<Message[]>;
   newMessage = '';
   recipientId: string = null;
+  allreadyLoadedMessages = false;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -54,6 +55,7 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
           } else {
             this.title.setTitle(this.chat.title || this.chat.users[0].name);
             this.messages$ = this.messageService.getChatMessage(this.chat.id);
+            this.allreadyLoadedMessages = true;
           }
         })
       )
@@ -65,16 +67,27 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
     this.newMessage = this.newMessage.trim();
     if (this.newMessage) {
       if (this.chat) {
-        this.messageService.createMessage({
-          text: this.newMessage,
-          chatId: this.chat.id,
-          senderId: this.authService.authUser.id
-        }).pipe(take(1)).subscribe(console.log);
+        this.createMessage().pipe(take(1)).subscribe(console.log);
         this.newMessage = '';
       } else {
         this.createPrivateChat();
       }
     }
+  }
+
+  private createMessage(): Observable<Message> {
+    return this.messageService.createMessage({
+      text: this.newMessage,
+      chatId: this.chat.id,
+      senderId: this.authService.authUser.id
+    }).pipe(
+      tap(_message => {
+        if (!this.allreadyLoadedMessages) {
+          this.messages$ = this.messageService.getChatMessage(this.chat.id);
+          this.allreadyLoadedMessages = true;
+        }
+      })
+    );
   }
 
   private createPrivateChat(): void {

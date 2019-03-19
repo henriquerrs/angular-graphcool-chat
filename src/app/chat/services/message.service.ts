@@ -29,7 +29,28 @@ export class MessageService {
     return this.apollo.mutate({
       mutation: CREATE_MESSAGE_MUTATION,
       variables: message,
+      optimisticResponse: {
+        __typename: 'Mutation',
+        createMessage: {
+          __typename: 'Message',
+          id: '',
+          text: message.text,
+          createdAt: new Date().toISOString(),
+          sender: {
+            __typename: 'User',
+            id: message.senderId,
+            name: '',
+            email: '',
+            createdAt: ''
+          },
+          chat: {
+            __typename: 'Chat',
+            id: message.chatId
+          }
+        }
+      },
       update: (store: DataProxy, {data: { createMessage }}) => {
+        try {
         const data = store.readQuery<AllMessagesQuery>({
           query: GET_CHAT_MESSAGES_QUERY,
           variables: { chatId: message.chatId }
@@ -40,10 +61,12 @@ export class MessageService {
           variables: { chatId: message.chatId },
           data
         });
+      } catch (e) {
+        console.log('allMessageQuery not found!');
+      }
       }
     }).pipe(
       map(res => res.data.createMessage)
     );
   }
-
 }
