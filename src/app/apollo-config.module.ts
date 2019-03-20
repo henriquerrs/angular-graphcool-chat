@@ -4,6 +4,7 @@ import { HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { ApolloModule, Apollo } from 'apollo-angular';
 import { HttpLinkModule, HttpLink } from 'apollo-angular-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { persistCache } from 'apollo-cache-persist';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import { StorageKeys } from './storage-keys';
@@ -35,6 +36,15 @@ export class ApolloConfigModule {
         })
       });
       return forward(operation);
+    });
+
+    const cache = new InMemoryCache();
+
+    persistCache({
+      cache,
+      storage: window.localStorage
+    }).catch(err => {
+      console.log('Error while persisting cache: ', err);
     });
 
     const linkError = onError(({ graphQLErrors, networkError }) => {

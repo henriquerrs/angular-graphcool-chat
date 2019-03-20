@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Chat } from '../../models/chat.model';
 import { Subscription, Observable, of } from 'rxjs';
@@ -19,7 +19,7 @@ import { ChatMessageComponent } from '../chat-message/chat-message.component';
   templateUrl: './chat-window.component.html',
   styleUrls: ['./chat-window.component.scss']
 })
-export class ChatWindowComponent extends BaseComponent<Message> implements OnInit, OnDestroy {
+export class ChatWindowComponent extends BaseComponent<Message> implements AfterViewInit, OnInit, OnDestroy {
 
   chat: Chat;
   messages$: Observable<Message[]>;
@@ -63,6 +63,14 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
         })
       )
       .subscribe()
+    );
+  }
+
+  ngAfterViewInit(): void {
+    this.subscriptions.push(
+      this.messageQueryList.changes.subscribe(() => {
+        this.scrollToBotton('smooth');
+      })
     );
   }
 
