@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Chat } from '../../models/chat.model';
 import { Subscription, Observable, of } from 'rxjs';
@@ -12,6 +12,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import authenticate from 'graphcool/src/email-password/authenticate';
 import { ChatService } from '../../services/chat.service';
 import { BaseComponent } from 'src/app/shared/components/base.component';
+import { ChatMessageComponent } from '../chat-message/chat-message.component';
 
 @Component({
   selector: 'app-chat-window',
@@ -25,6 +26,8 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
   newMessage = '';
   recipientId: string = null;
   allreadyLoadedMessages = false;
+  @ViewChild('content') private content: ElementRef;
+  @ViewChildren(ChatMessageComponent) private messageQueryList: QueryList<ChatMessageComponent>;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -99,6 +102,12 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
           this.sendMessage();
         })
       ).subscribe();
+  }
+
+  private scrollToBotton(behavior: string = 'auto', block: string = 'end'): void {
+    setTimeout(() => {
+      this.content.nativeElement.scrollIntoView({ behavior, block });
+    }, 0);
   }
 
   ngOnDestroy(): void {
