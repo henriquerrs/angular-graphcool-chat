@@ -10,6 +10,7 @@ import { ApolloLink } from 'apollo-link';
 import { StorageKeys } from './storage-keys';
 import { GRAPHCOOL_CONFIG, GraphcoolConfig } from './core/providers/graphcool-config.provider';
 import { environment } from 'src/environments/environment';
+import { WebSocketLink } from 'apollo-link-ws';
 
 @NgModule({
   imports: [
@@ -36,6 +37,14 @@ export class ApolloConfigModule {
         })
       });
       return forward(operation);
+    });
+
+    const ws = new WebSocketLink({
+      uri: graphcoolConfig.subscritionAPI,
+      options: {
+        reconnect: true,
+        timeout: 30000
+      }
     });
 
     const cache = new InMemoryCache();
