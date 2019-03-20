@@ -75,7 +75,7 @@ export class ChatWindowComponent extends BaseComponent<Message> implements OnIni
     }
   }
 
-  private createMessage(): Observable<Message> {
+  private createMessage(): Observable<Message[]> {
     return this.messageService.createMessage({
       text: this.newMessage,
       chatId: this.chat.id,
