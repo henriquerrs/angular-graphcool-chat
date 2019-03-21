@@ -7,6 +7,7 @@ import { StorageKeys } from 'src/app/storage-keys';
 import { Router } from '@angular/router';
 import { Base64 } from 'js-base64';
 import { User } from '../models/user.model';
+import { ApolloConfigModule } from 'src/app/apollo-config.module';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class AuthService {
 
   constructor(
     private apollo: Apollo,
+    private apolloConfigModule: ApolloConfigModule,
     private router: Router
   ) {
     this.isAuthenticated.subscribe(is => console.log('authstate', is));
@@ -95,6 +97,7 @@ export class AuthService {
   }
 
   logout(): void {
+    this.apolloConfigModule.closeWebSocketConnection();
     window.localStorage.removeItem(StorageKeys.AUTH_TOKEN);
     window.localStorage.removeItem(StorageKeys.KEEP_SIGNED);
     this.keepSigned = false;
@@ -114,7 +117,7 @@ export class AuthService {
       .pipe(
         tap(authData => {
           const token = window.localStorage.getItem(StorageKeys.AUTH_TOKEN);
-          this.setAuthState({id: authData.id, token, isAuthenticated: authData.isAuthenticated});
+          this.setAuthState({id: authData.id, token, isAuthenticated: authData.isAuthenticated}, true);
         }),
         mergeMap(res => of()),
         catchError(error => {
@@ -138,10 +141,14 @@ export class AuthService {
     );
   }
 
-  private setAuthState(authData: {id: string, token: string, isAuthenticated: boolean}): void {
+  private setAuthState(authData: {id: string, token: string, isAuthenticated: boolean}, isRefresh: boolean = false): void {
     if (authData.isAuthenticated) {
       window.localStorage.setItem(StorageKeys.AUTH_TOKEN, authData.token);
       this.authUser = { id: authData.id };
+      if (!isRefresh) {
+        this.apolloConfigModule.closeWebSocketConnection();
+      }
+      this.apolloConfigModule.closeWebSocketConnection();
     }
     this._isAuthenticated.next(authData.isAuthenticated);
   }

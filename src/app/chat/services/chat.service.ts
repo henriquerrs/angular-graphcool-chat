@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Chat } from '../models/chat.model';
-import { Apollo } from 'apollo-angular';
+import { Apollo, QueryRef } from 'apollo-angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { AllChatsQuery, USER_CHATS_QUERY, ChatQuery, CHAT_BY_ID_OR_BY_USERS_QUERY, CREATE_PRIVATE_CHAT_MUTATION } from './chat.graphql';
 import { map } from 'rxjs/operators';
 import { DataProxy } from 'apollo-cache';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
+import { USER_MESSAGES_SUBSCRIPTION } from './message.graphql';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 export class ChatService {
 
   chats$: Observable<Chat[]>;
+  private queryRef: QueryRef<AllChatsQuery>;
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -33,12 +35,23 @@ export class ChatService {
   }
 
   getUserChats(): Observable<Chat[]> {
-    return this.apollo.watchQuery<AllChatsQuery>({
+    this.queryRef = this.apollo.watchQuery<AllChatsQuery>({
       query: USER_CHATS_QUERY,
       variables: {
         loggedUserId: this.authService.authUser.id
       }
-    }).valueChanges.pipe(
+    });
+    this.queryRef.subscribeToMore({
+      document: USER_MESSAGES_SUBSCRIPTION,
+      variables: { loggedUserId: this.authService.authUser.id },
+      updateQuery: (previous, response) => {
+        console.log('Previous: ', previous);
+        console.log('Response: ', response);
+        return previous;
+      }
+    });
+    return this.queryRef.valueChanges
+      .pipe(
         map(res => res.data.allChats),
         map((chats: Chat[]) => {
           const chatsToSort = chats.slice();
@@ -48,7 +61,7 @@ export class ChatService {
             return valueB - valueA;
           });
         })
-    );
+      );
   }
 
   getChatByIdOrByUsers(chatOrUserId: string): Observable<Chat> {
