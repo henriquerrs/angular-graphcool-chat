@@ -26,13 +26,16 @@ export class ChatService {
   ) { }
 
   startChatsMonitoring(): void {
-    this.chats$ = this.getUserChats();
-    this.subscriptions.push(this.chats$.subscribe());
-    this.router.events.subscribe((event: RouterEvent) => {
-      if (event instanceof NavigationEnd && !this.router.url.includes('chat')) {
-        this.onDestroy();
-      }
-    });
+    if (!this.chats$) {
+      console.log('New Subscribe');
+      this.chats$ = this.getUserChats();
+      this.subscriptions.push(this.chats$.subscribe());
+      this.router.events.subscribe((event: RouterEvent) => {
+        if (event instanceof NavigationEnd && !this.router.url.includes('chat')) {
+          this.onDestroy();
+        }
+      });
+    }
   }
 
   getUserChats(): Observable<Chat[]> {
@@ -48,6 +51,24 @@ export class ChatService {
       updateQuery: (previous: AllChatsQuery, { subscriptionData }): AllChatsQuery => {
 
         const newMessage: Message = subscriptionData.data.Message.node;
+        try {
+          if (newMessage.sender.id !== this.authService.authUser.id) {
+            const apolloClient = this.apollo.getClient();
+            const chatMessagesVariables = { chatId: newMessage.chat.id };
+            const chatMessagesData = apolloClient.readQuery<AllMessagesQuery>({
+              query: GET_CHAT_MESSAGES_QUERY,
+              variables: chatMessagesVariables
+            });
+            chatMessagesData.allMessages = [...chatMessagesData.allMessages, newMessage];
+            apolloClient.writeQuery({
+              query: GET_CHAT_MESSAGES_QUERY,
+              variables: chatMessagesVariables,
+              data: chatMessagesData
+            });
+          }
+        } catch (e) {
+          console.log('allMessagesQuery not found!');
+        }
         const chatToUpdateIndex: number =
           (previous.allChats)
             ? previous.allChats.findIndex(chat => chat.id === newMessage.chat.id)

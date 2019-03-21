@@ -54,41 +54,41 @@ export class MessageService {
       },
       update: (store: DataProxy, {data: { createMessage }}) => {
         try {
-        const data = store.readQuery<AllMessagesQuery>({
-          query: GET_CHAT_MESSAGES_QUERY,
-          variables: { chatId: message.chatId }
-        });
-        data.allMessages = [...data.allMessages, createMessage];
-        store.writeQuery({
-          query: GET_CHAT_MESSAGES_QUERY,
-          variables: { chatId: message.chatId },
-          data
-        });
-      } catch (e) {
-        console.log('allMessageQuery not found!');
-      }
-      try {
-        const userChatsVariables = {loggedUserId: this.authService.authUser.id};
-        const userChatsData = store.readQuery<AllChatsQuery>({
-          query: USER_CHATS_QUERY,
-          variables: userChatsVariables
-        });
-        const newUserChatsList = [...userChatsData.allChats];
-        newUserChatsList.map(c => {
-          if (c.id === createMessage.chat.id) {
-            c.messages = [createMessage];
-          }
-          return c;
-        });
-        userChatsData.allChats = newUserChatsList;
-        store.writeQuery({
-          query: USER_CHATS_QUERY,
-          variables: userChatsVariables,
-          data: userChatsData
-        });
-      } catch (e) {
-        console.log('allChatsQuery not found!');
-      }
+          const data = store.readQuery<AllMessagesQuery>({
+            query: GET_CHAT_MESSAGES_QUERY,
+            variables: { chatId: message.chatId }
+          });
+          data.allMessages = [...data.allMessages, createMessage];
+          store.writeQuery({
+            query: GET_CHAT_MESSAGES_QUERY,
+            variables: { chatId: message.chatId },
+            data
+          });
+        } catch (e) {
+          console.log('allMessageQuery not found!');
+        }
+        try {
+          const userChatsVariables = {loggedUserId: this.authService.authUser.id};
+          const userChatsData = store.readQuery<AllChatsQuery>({
+            query: USER_CHATS_QUERY,
+            variables: userChatsVariables
+          });
+          const newUserChatsList = [...userChatsData.allChats];
+          newUserChatsList.map(c => {
+            if (c.id === createMessage.chat.id) {
+              c.messages = [createMessage];
+            }
+            return c;
+          });
+          userChatsData.allChats = newUserChatsList;
+          store.writeQuery({
+            query: USER_CHATS_QUERY,
+            variables: userChatsVariables,
+            data: userChatsData
+          });
+        } catch (e) {
+          console.log('allChatsQuery not found!');
+        }
       }
     }).pipe(
       map(res => res.data.createMessage)
