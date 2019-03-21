@@ -1,7 +1,9 @@
 import gql from 'graphql-tag';
 import { Chat } from '../models/chat.model';
+import { Message } from '../models/message.model';
 
 export interface AllChatsQuery {
+  Message: any;
   allChats: Chat[];
 }
 

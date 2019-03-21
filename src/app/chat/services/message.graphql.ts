@@ -22,8 +22,8 @@ const MessageFragment = gql `
   }
 `;
 
-export const GET_CHAT_MESSAGES_QUERY = gql `
-  query GetChatMessagesQuery($chatId: ID!){
+export const GET_CHAT_MESSAGES_QUERY = gql`
+  query GetChatMessagesQuery($chatId: ID!) {
     allMessages(
       filter: {
         chat: {
@@ -33,7 +33,7 @@ export const GET_CHAT_MESSAGES_QUERY = gql `
       orderBy: createdAt_ASC
     ) {
       ...MessageFragment
-      }
+    }
   }
   ${MessageFragment}
 `;

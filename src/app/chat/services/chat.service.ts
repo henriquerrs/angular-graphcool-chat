@@ -1,3 +1,4 @@
+import { Message } from './../models/message.model';
 import { Injectable } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Chat } from '../models/chat.model';
@@ -7,7 +8,7 @@ import { AllChatsQuery, USER_CHATS_QUERY, ChatQuery, CHAT_BY_ID_OR_BY_USERS_QUER
 import { map } from 'rxjs/operators';
 import { DataProxy } from 'apollo-cache';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
-import { USER_MESSAGES_SUBSCRIPTION } from './message.graphql';
+import { USER_MESSAGES_SUBSCRIPTION, AllMessagesQuery, GET_CHAT_MESSAGES_QUERY } from './message.graphql';
 
 @Injectable({
   providedIn: 'root'
@@ -44,9 +45,24 @@ export class ChatService {
     this.queryRef.subscribeToMore({
       document: USER_MESSAGES_SUBSCRIPTION,
       variables: { loggedUserId: this.authService.authUser.id },
-      updateQuery: (previous, response) => {
-        console.log('Previous: ', previous);
-        console.log('Response: ', response);
+      updateQuery: (previous: AllChatsQuery, { subscriptionData }): AllChatsQuery => {
+
+        const newMessage: Message = subscriptionData.data.Message.node;
+        const chatToUpdateIndex: number =
+          (previous.allChats)
+            ? previous.allChats.findIndex(chat => chat.id === newMessage.chat.id)
+            : -1
+          ;
+        if (chatToUpdateIndex > -1) {
+          const newAllChats = [...previous.allChats];
+          const chatToUpdate: Chat = Object.assign({}, newAllChats[chatToUpdateIndex]);
+          chatToUpdate.messages = [newMessage];
+          newAllChats[chatToUpdateIndex] = chatToUpdate;
+          return {
+            ...previous,
+            allChats: newAllChats
+          };
+        }
         return previous;
       }
     });
