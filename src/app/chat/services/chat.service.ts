@@ -27,7 +27,6 @@ export class ChatService {
 
   startChatsMonitoring(): void {
     if (!this.chats$) {
-      console.log('New Subscribe');
       this.chats$ = this.getUserChats();
       this.subscriptions.push(this.chats$.subscribe());
       this.router.events.subscribe((event: RouterEvent) => {
