@@ -4,11 +4,17 @@ import { Observable, Subscription } from 'rxjs';
 import { Chat } from '../models/chat.model';
 import { Apollo, QueryRef } from 'apollo-angular';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { AllChatsQuery, USER_CHATS_QUERY, ChatQuery, CHAT_BY_ID_OR_BY_USERS_QUERY, CREATE_PRIVATE_CHAT_MUTATION } from './chat.graphql';
+import { AllChatsQuery,
+  USER_CHATS_QUERY,
+  ChatQuery,
+  CHAT_BY_ID_OR_BY_USERS_QUERY,
+  CREATE_PRIVATE_CHAT_MUTATION,
+  USER_CHATS_SUBSCRIPTION } from './chat.graphql';
 import { map } from 'rxjs/operators';
 import { DataProxy } from 'apollo-cache';
 import { Router, RouterEvent, NavigationEnd } from '@angular/router';
 import { USER_MESSAGES_SUBSCRIPTION, AllMessagesQuery, GET_CHAT_MESSAGES_QUERY } from './message.graphql';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +28,8 @@ export class ChatService {
   constructor(
     private apollo: Apollo,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) { }
 
   startChatsMonitoring(): void {
@@ -32,6 +39,7 @@ export class ChatService {
       this.router.events.subscribe((event: RouterEvent) => {
         if (event instanceof NavigationEnd && !this.router.url.includes('chat')) {
           this.onDestroy();
+          this.userService.stopUserMonitoring();
         }
       });
     }
@@ -40,16 +48,34 @@ export class ChatService {
   getUserChats(): Observable<Chat[]> {
     this.queryRef = this.apollo.watchQuery<AllChatsQuery>({
       query: USER_CHATS_QUERY,
-      variables: {
-        loggedUserId: this.authService.authUser.id
+      variables: { loggedUserId: this.authService.authUser.id },
+      fetchPolicy: 'network-only'
+    });
+
+    this.queryRef.subscribeToMore({
+      document: USER_CHATS_SUBSCRIPTION,
+      variables: { loggedUserId: this.authService.authUser.id },
+      updateQuery: (previous: AllChatsQuery, { subscriptionData }): AllChatsQuery => {
+
+        const newChat: Chat = subscriptionData.data.Chat.node;
+
+        if (previous.allChats.every(chat => chat.id !== newChat.id)) {
+          return {
+            ...previous,
+            allChats: [newChat, ...previous.allChats]
+          };
+        }
+        return previous;
       }
     });
+
     this.queryRef.subscribeToMore({
       document: USER_MESSAGES_SUBSCRIPTION,
       variables: { loggedUserId: this.authService.authUser.id },
       updateQuery: (previous: AllChatsQuery, { subscriptionData }): AllChatsQuery => {
 
         const newMessage: Message = subscriptionData.data.Message.node;
+
         try {
           if (newMessage.sender.id !== this.authService.authUser.id) {
             const apolloClient = this.apollo.getClient();
