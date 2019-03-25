@@ -14,7 +14,9 @@ import {
   MatIconModule,
   MatLineModule,
   MatSidenavModule,
-  MatTabsModule
+  MatTabsModule,
+  MatMenuModule,
+  MatDialogModule
 } from '@angular/material';
 import { NoRecordComponent } from './components/no-record/no-record.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
@@ -44,6 +46,8 @@ import { FromNowPipe } from './pipes/from-now.pipe';
     FormsModule,
     AvatarComponent,
     FromNowPipe,
+    MatMenuModule,
+    MatDialogModule,
     ReactiveFormsModule
   ],
   declarations: [NoRecordComponent, AvatarComponent, FromNowPipe]

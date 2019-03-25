@@ -30,3 +30,14 @@
       title="Nenhum Chat (alone)">
     </app-no-record>
   </ng-template>
+
+  <button mat-fab class="fab-botton-right" [matMenuTriggerFor]="chatListOptions">
+    <mat-icon>add</mat-icon>
+  </button>
+
+  <mat-menu #chatListOptions="matMenu" [overlapTrigger]="false">
+    <button mat-menu-item (click)="onAddGroup()">
+      <mat-icon>group_add</mat-icon>
+      <span>Novo Grupo</span>
+    </button>
+  </mat-menu>
