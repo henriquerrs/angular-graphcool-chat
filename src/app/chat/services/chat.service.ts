@@ -36,14 +36,18 @@ export class ChatService {
     if (!this.chats$) {
       this.chats$ = this.getUserChats();
       this.subscriptions.push(this.chats$.subscribe());
-      this.router.events.subscribe((event: RouterEvent) => {
-        if (event instanceof NavigationEnd && !this.router.url.includes('chat')) {
-          this.onDestroy();
-          this.userService.stopUserMonitoring();
-        }
-      });
+      this.subscriptions.push(
+        this.router.events.subscribe((event: RouterEvent) => {
+          if (event instanceof NavigationEnd && !this.router.url.includes('chat')) {
+            this.stopChatMonitoring();
+            this.userService.stopUserMonitoring();
+          }
+        })
+      );
     }
   }
+
+
 
   getUserChats(): Observable<Chat[]> {
     this.queryRef = this.apollo.watchQuery<AllChatsQuery>({
@@ -181,8 +185,9 @@ export class ChatService {
     );
   }
 
-  private onDestroy(): void {
+  private stopChatMonitoring(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = [];
+    this.chats$ = null;
   }
 }

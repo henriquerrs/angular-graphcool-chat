@@ -21,7 +21,8 @@ export class MessageService {
   getChatMessage(chatId: string): Observable<Message[]> {
     return this.apollo.watchQuery<AllMessagesQuery>({
       query: GET_CHAT_MESSAGES_QUERY,
-      variables: { chatId }
+      variables: { chatId },
+      fetchPolicy: 'network-only'
     }).valueChanges
       .pipe(
         map(res => res.data.allMessages)

@@ -98,6 +98,7 @@ export class AuthService {
 
   logout(): void {
     this.apolloConfigModule.closeWebSocketConnection();
+    this.apolloConfigModule.cachePersistor.purge();
     window.localStorage.removeItem(StorageKeys.AUTH_TOKEN);
     window.localStorage.removeItem(StorageKeys.KEEP_SIGNED);
     this.keepSigned = false;
@@ -129,7 +130,8 @@ export class AuthService {
 
   private validateToken(): Observable<{id: string, isAuthenticated: boolean}> {
     return this.apollo.query<LoggedInUserQuery>({
-      query: LOGGED_IN_USER_QUERY
+      query: LOGGED_IN_USER_QUERY,
+      fetchPolicy: 'network-only'
     }).pipe(
       map(res => {
         const user = res.data.loggedInUser;
@@ -137,7 +139,8 @@ export class AuthService {
           id: user && user.id,
           isAuthenticated: user !== null
         };
-      })
+      }),
+      mergeMap(authData => (authData.isAuthenticated) ? of(authData) : throwError(new Error('Token Inválido')))
     );
   }
 
@@ -148,7 +151,6 @@ export class AuthService {
       if (!isRefresh) {
         this.apolloConfigModule.closeWebSocketConnection();
       }
-      this.apolloConfigModule.closeWebSocketConnection();
     }
     this._isAuthenticated.next(authData.isAuthenticated);
   }
