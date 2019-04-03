@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators, FormControl, FormArray } from '@ang
 import { Observable, Subscription } from 'rxjs';
 import { User } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { ChatService } from '../../services/chat.service';
 
 @Component({
@@ -55,7 +55,6 @@ export class ChatAddGroupComponent implements OnDestroy, OnInit {
 
   addMember(user: User): void {
     this.members.push(this.fb.group(user));
-    console.log(this.newGroupForm.value);
   }
 
   removeMember(index: number) {
@@ -63,14 +62,16 @@ export class ChatAddGroupComponent implements OnDestroy, OnInit {
   }
 
   onSubmit(): void {
-    console.log('Before: ', this.newGroupForm.value);
 
     const formValue = Object.assign({
       title: this.title.value,
       usersIds: this.members.value.map(m => m.id)
     });
 
-    console.log('After: ', formValue);
+    this.chatService.createGroup(formValue)
+      .pipe(take(1))
+      .subscribe();
+
   }
 
   ngOnDestroy(): void {

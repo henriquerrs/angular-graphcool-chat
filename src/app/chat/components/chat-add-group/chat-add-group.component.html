@@ -16,7 +16,6 @@
       <h3 matSubheader>Selected users</h3>
       <mat-list-item *ngFor="let member of members.controls; let i=index" [formGroupName]="i">
         <h3 matLine>{{ member.value.name }}</h3>
-        <input type="text" formControlName="name">
         <button type="button" mat-icon-button (click)="removeMember(i)">
           <mat-icon>close</mat-icon>
         </button>

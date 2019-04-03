@@ -15,7 +15,6 @@ import { AllChatsQuery,
   import { USER_MESSAGES_SUBSCRIPTION, AllMessagesQuery, GET_CHAT_MESSAGES_QUERY } from './message.graphql';
   import { Chat } from '../models/chat.model';
   import { Message } from '../models/message.model';
-  import { User } from '../../core/models/user.model';
   import { UserService } from '../../core/services/user.service';
 
 @Injectable({
@@ -196,7 +195,10 @@ export class ChatService {
 
     return this.apollo.mutate({
       mutation: CREATE_GROUP_MUTATION,
-      variables,
+      variables: {
+        ...variables,
+        loggedUserId: this.authService.authUser.id
+      },
       optimisticResponse: {
         __typename: 'Mutation',
         createChat: {
