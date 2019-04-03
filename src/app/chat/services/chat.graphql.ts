@@ -1,6 +1,7 @@
+
 import gql from 'graphql-tag';
+
 import { Chat } from '../models/chat.model';
-import { Message } from '../models/message.model';
 
 export interface AllChatsQuery {
   Chat: any;
@@ -93,6 +94,21 @@ export const CREATE_PRIVATE_CHAT_MUTATION = gql `
     ) {
       ...ChatFragment
       ...ChatMessagesFragment
+    }
+  }
+  ${ChatFragment}
+  ${ChatMessagesFragment}
+`;
+
+export const CREATE_GROUP_MUTATION = gql `
+  mutation CreateGroupMutation($title: String!, $usersIds: [ID!]!) {
+  createChat(
+    title: $title,
+    usersIds: $usersIds,
+    isGroup: true
+  ) {
+    ...ChatFragment
+    ...ChatMessagesFragment
     }
   }
   ${ChatFragment}

@@ -1,7 +1,5 @@
-import { Message } from './../models/message.model';
 import { Injectable } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { Chat } from '../models/chat.model';
 import { Apollo, QueryRef } from 'apollo-angular';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { AllChatsQuery,
@@ -9,12 +7,16 @@ import { AllChatsQuery,
   ChatQuery,
   CHAT_BY_ID_OR_BY_USERS_QUERY,
   CREATE_PRIVATE_CHAT_MUTATION,
-  USER_CHATS_SUBSCRIPTION } from './chat.graphql';
-import { map } from 'rxjs/operators';
-import { DataProxy } from 'apollo-cache';
-import { Router, RouterEvent, NavigationEnd } from '@angular/router';
-import { USER_MESSAGES_SUBSCRIPTION, AllMessagesQuery, GET_CHAT_MESSAGES_QUERY } from './message.graphql';
-import { UserService } from 'src/app/core/services/user.service';
+  USER_CHATS_SUBSCRIPTION,
+  CREATE_GROUP_MUTATION} from './chat.graphql';
+  import { map } from 'rxjs/operators';
+  import { DataProxy } from 'apollo-cache';
+  import { Router, RouterEvent, NavigationEnd } from '@angular/router';
+  import { USER_MESSAGES_SUBSCRIPTION, AllMessagesQuery, GET_CHAT_MESSAGES_QUERY } from './message.graphql';
+  import { Chat } from '../models/chat.model';
+  import { Message } from '../models/message.model';
+  import { User } from '../../core/models/user.model';
+  import { UserService } from '../../core/services/user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -43,11 +45,15 @@ export class ChatService {
             this.userService.stopUserMonitoring();
           }
         })
-      );
+        );
     }
   }
 
-
+  private stopChatMonitoring(): void {
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = [];
+    this.chats$ = null;
+  }
 
   getUserChats(): Observable<Chat[]> {
     this.queryRef = this.apollo.watchQuery<AllChatsQuery>({
@@ -185,9 +191,49 @@ export class ChatService {
     );
   }
 
-  private stopChatMonitoring(): void {
-    this.subscriptions.forEach(s => s.unsubscribe());
-    this.subscriptions = [];
-    this.chats$ = null;
+  createGroup(variables: {title: string, usersIds: string[]}): Observable<Chat> {
+    variables.usersIds.push(this.authService.authUser.id);
+
+    return this.apollo.mutate({
+      mutation: CREATE_GROUP_MUTATION,
+      variables,
+      optimisticResponse: {
+        __typename: 'Mutation',
+        createChat: {
+          __typename: 'Chat',
+          id: '',
+          title: variables.title,
+          createdAt: new Date().toISOString(),
+          isGroup: true,
+          users: [
+            {
+              __typename: 'User',
+              id: '',
+              name: '',
+              email: '',
+              createAt: new Date().toISOString()
+            }
+          ],
+          message: []
+        }
+      },
+      update: (store: DataProxy, {data: { createChat } }) => {
+
+        const userChatsVariables = { loggedUserId: this.authService.authUser.id };
+        const userChatsData = store.readQuery<AllChatsQuery>({
+          query: USER_CHATS_QUERY,
+          variables: userChatsVariables
+        });
+        userChatsData.allChats = [ createChat, ...userChatsData.allChats ];
+        store.writeQuery({
+          query: USER_CHATS_QUERY,
+          variables: userChatsVariables,
+          data: userChatsData
+        });
+      }
+    }).pipe(
+      map(res => res.data.createChat)
+    );
   }
+
 }
