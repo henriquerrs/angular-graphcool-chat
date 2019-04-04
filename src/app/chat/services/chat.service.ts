@@ -16,11 +16,12 @@ import { AllChatsQuery,
   import { Chat } from '../models/chat.model';
   import { Message } from '../models/message.model';
   import { UserService } from '../../core/services/user.service';
+import { BaseService } from 'src/app/core/services/base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ChatService {
+export class ChatService extends BaseService {
 
   chats$: Observable<Chat[]>;
   private queryRef: QueryRef<AllChatsQuery>;
@@ -31,7 +32,9 @@ export class ChatService {
     private authService: AuthService,
     private router: Router,
     private userService: UserService
-  ) { }
+  ) {
+    super();
+  }
 
   startChatsMonitoring(): void {
     if (!this.chats$) {
@@ -157,32 +160,26 @@ export class ChatService {
       },
       update: (store: DataProxy, {data: { createChat } }) => {
 
-        const userChatsVariables = { loggedUserId: this.authService.authUser.id };
-        const userChatsData = store.readQuery<AllChatsQuery>({
+        this.readAndWriteQuery<Chat>({
+          store,
+          newRecord: createChat,
           query: USER_CHATS_QUERY,
-          variables: userChatsVariables
-        });
-        userChatsData.allChats = [ createChat, ...userChatsData.allChats ];
-        store.writeQuery({
-          query: USER_CHATS_QUERY,
-          variables: userChatsVariables,
-          data: userChatsData
+          queryName: 'allChats',
+          arrayOperation: 'unshift',
+          variables: { loggedUserId: this.authService.authUser.id }
         });
 
-        const variables = {
-          chatId: targetUserId,
-          loggedUserId: this.authService.authUser.id,
-          targetUserId
-        };
-        const data = store.readQuery<AllChatsQuery>({
+        this.readAndWriteQuery<Chat>({
+          store,
+          newRecord: createChat,
           query: CHAT_BY_ID_OR_BY_USERS_QUERY,
-          variables
-        });
-        data.allChats = [createChat];
-        store.writeQuery({
-          query: CHAT_BY_ID_OR_BY_USERS_QUERY,
-          variables,
-          data
+          queryName: 'allChats',
+          arrayOperation: 'singleRecord',
+          variables: {
+            chatId: targetUserId,
+            loggedUserId: this.authService.authUser.id,
+            targetUserId
+          }
         });
       }
     }).pipe(
@@ -221,16 +218,13 @@ export class ChatService {
       },
       update: (store: DataProxy, {data: { createChat } }) => {
 
-        const userChatsVariables = { loggedUserId: this.authService.authUser.id };
-        const userChatsData = store.readQuery<AllChatsQuery>({
+        this.readAndWriteQuery<Chat>({
+          store,
+          newRecord: createChat,
           query: USER_CHATS_QUERY,
-          variables: userChatsVariables
-        });
-        userChatsData.allChats = [ createChat, ...userChatsData.allChats ];
-        store.writeQuery({
-          query: USER_CHATS_QUERY,
-          variables: userChatsVariables,
-          data: userChatsData
+          queryName: 'allChats',
+          arrayOperation: 'unshift',
+          variables: { loggedUserId: this.authService.authUser.id }
         });
       }
     }).pipe(

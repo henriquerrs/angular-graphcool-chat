@@ -5,6 +5,8 @@ import { User } from 'src/app/core/models/user.model';
 import { UserService } from 'src/app/core/services/user.service';
 import { map, take } from 'rxjs/operators';
 import { ChatService } from '../../services/chat.service';
+import { Chat } from '../../models/chat.model';
+import { MatDialogRef, MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-chat-add-group',
@@ -20,7 +22,9 @@ export class ChatAddGroupComponent implements OnDestroy, OnInit {
   constructor(
     private chatService: ChatService,
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private dialogRef: MatDialogRef<ChatAddGroupComponent>,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -70,7 +74,10 @@ export class ChatAddGroupComponent implements OnDestroy, OnInit {
 
     this.chatService.createGroup(formValue)
       .pipe(take(1))
-      .subscribe();
+      .subscribe((chat: Chat) => {
+        this.dialogRef.close();
+        this.snackBar.open(`${chat.title} created!`, 'OK', { duration: 3000 });
+      });
 
   }
 

@@ -3,6 +3,8 @@ import gql from 'graphql-tag';
 import { Chat } from '../models/chat.model';
 
 export interface AllChatsQuery {
+  Message: any;
+  Chat: any;
   allChats: Chat[];
 }
 
