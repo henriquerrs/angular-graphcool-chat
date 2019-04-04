@@ -9,7 +9,6 @@ import { User } from 'src/app/core/models/user.model';
 import { Message } from '../../models/message.model';
 import { MessageService } from '../../services/message.service';
 import { AuthService } from 'src/app/core/services/auth.service';
-import authenticate from 'graphcool/src/email-password/authenticate';
 import { ChatService } from '../../services/chat.service';
 import { BaseComponent } from 'src/app/shared/components/base.component';
 import { ChatMessageComponent } from '../chat-message/chat-message.component';
