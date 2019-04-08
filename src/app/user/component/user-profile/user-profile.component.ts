@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ErrorService } from './../../../core/services/error.service';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { User } from 'src/app/core/models/user.model';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { take } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-user-profile',
@@ -13,9 +15,13 @@ export class UserProfileComponent implements OnInit {
 
   user: User;
   isEditing = false;
+  isLoading = false;
+  @HostBinding('class.app-user-profile') private applyHostClass = true;
 
   constructor(
     private authService: AuthService,
+    private snackBar: MatSnackBar,
+    private errorService: ErrorService,
     private userService: UserService
   ) { }
 
@@ -24,12 +30,17 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSave() {
-    console.log('User: ', this.user);
+    this.isLoading = true;
+    this.isEditing = false;
+    let message: string;
     this.userService.updateUser(this.user)
     .pipe(take(1))
     .subscribe(
-      (user: User) => {
-        console.log('Update: ', user);
+      (user: User) => message = 'Profile updated!',
+      error => message = this.errorService.getErrorMessage(error),
+      () => {
+        this.isLoading = false;
+        this.snackBar.open(message, 'OK', { duration: 3000, verticalPosition: 'top' });
       }
     );
   }

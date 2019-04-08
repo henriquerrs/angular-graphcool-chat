@@ -50,11 +50,11 @@ mutation UpdateUserMutation($id: ID!, $name: String!, $email: String!) {
 ${UserFragment}
 `;
 
-export const NEW_USER_SUBSCRIPTION = gql `
-  subscription NewUserSubscription {
+export const USER_SUBSCRIPTION = gql `
+  subscription UserSubscription {
     User(
       filter: {
-        mutation_in: [ CREATED ]
+        mutation_in: [ CREATED, UPDATED ]
       }
     ) {
       mutation
