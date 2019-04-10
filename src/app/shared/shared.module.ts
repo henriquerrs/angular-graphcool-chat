@@ -22,13 +22,19 @@ import { NoRecordComponent } from './components/no-record/no-record.component';
 import { AvatarComponent } from './components/avatar/avatar.component';
 import { FromNowPipe } from './pipes/from-now.pipe';
 import { ImagePreviewComponent } from './components/image-preview/image-preview.component';
+import { ReadFilePipe } from './pipes/read-file.pipe';
 
 @NgModule({
   imports: [
     MatIconModule,
     MatCardModule,
     MatToolbarModule,
-    CommonModule
+    CommonModule,
+    MatButtonModule,
+    MatDialogModule
+  ],
+  entryComponents: [
+    ImagePreviewComponent
   ],
   exports: [
     CommonModule,
@@ -52,8 +58,15 @@ import { ImagePreviewComponent } from './components/image-preview/image-preview.
     MatMenuModule,
     MatDialogModule,
     ImagePreviewComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ReadFilePipe
   ],
-  declarations: [NoRecordComponent, AvatarComponent, FromNowPipe, ImagePreviewComponent]
+  declarations: [
+    NoRecordComponent,
+    AvatarComponent,
+    FromNowPipe,
+    ImagePreviewComponent,
+    ReadFilePipe
+  ]
 })
 export class SharedModule {}
