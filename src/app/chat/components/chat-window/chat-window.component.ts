@@ -119,7 +119,7 @@ export class ChatWindowComponent extends BaseComponent<Message> implements After
     }, 0);
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.title.setTitle('Angular Graphcool Chat');
   }
