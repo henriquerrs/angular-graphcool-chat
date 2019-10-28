@@ -158,7 +158,7 @@ export class ChatService extends BaseService {
         loggedUserId: this.authService.authUser.id,
         targetUserId
       },
-      update: (store: DataProxy, {data: { createChat } }) => {
+      update: (store: DataProxy, {data: { createChat } }: any) => {
 
         this.readAndWriteQuery<Chat>({
           store,
@@ -216,7 +216,7 @@ export class ChatService extends BaseService {
           message: []
         }
       },
-      update: (store: DataProxy, {data: { createChat } }) => {
+      update: (store: DataProxy, {data: { createChat } }: any) => {
 
         this.readAndWriteQuery<Chat>({
           store,

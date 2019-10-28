@@ -56,7 +56,7 @@ export class MessageService extends BaseService {
           }
         }
       },
-      update: (store: DataProxy, {data: { createMessage }}) => {
+      update: (store: DataProxy, {data: { createMessage }} : any) => {
 
         this.readAndWriteQuery<Message>({
           store,
