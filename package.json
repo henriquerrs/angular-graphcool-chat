@@ -30,7 +30,7 @@
     "apollo-link": "^1.2.11",
     "apollo-link-error": "^1.1.10",
     "apollo-link-ws": "1.0.8",
-    "apollo-server": "^2.4.8",
+    "apollo-server": "^2.14.2",
     "core-js": "^2.5.4",
     "graphql": "git://github.com/graphql/graphql-js.git#npm",
     "graphql-tag": "^2.10.1",
